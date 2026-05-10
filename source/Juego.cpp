@@ -1,4 +1,5 @@
 #include "Juego.h"
+#include "Suelo.h"
 
 Juego::Juego() {
 
@@ -29,7 +30,7 @@ void Juego::Iniciar() {
 
 
     // Creo el suelo inicial (Cuerpo Estático)
-    objetos.emplace_back(std::make_unique<Proyectil>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
 
     // Cargo catapulta
     catapulta.Iniciar();

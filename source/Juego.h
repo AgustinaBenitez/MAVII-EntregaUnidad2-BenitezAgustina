@@ -19,7 +19,7 @@ private:
     //Sound sonido2;
 
     // Objetos
-    Catapulta catapulta();
+    Catapulta catapulta;
 
 public:
 

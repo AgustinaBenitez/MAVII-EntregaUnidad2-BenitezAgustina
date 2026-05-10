@@ -21,6 +21,5 @@ public:
 	void Iniciar();
 	void Dibujar();
 
-
 };
 

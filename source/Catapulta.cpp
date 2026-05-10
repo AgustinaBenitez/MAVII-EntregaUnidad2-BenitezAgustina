@@ -17,11 +17,11 @@ Catapulta::~Catapulta() {
 void Catapulta::Iniciar() {
 
 	// Propiedades
-	escalaCatapulta = 0.15f;
-	posicionCatapulta = { 70, 365 };
+	escalaCatapulta = 0.1f;
+	posicionCatapulta = { 50, 420 };
 
 	// Cargo textura
-	texturaCatapulta = LoadTexture("assets/texturaCatapulta.png");
+	texturaCatapulta = LoadTexture("assets/PvZ - Repeater.png");
 	SetTextureFilter(texturaCatapulta, TEXTURE_FILTER_BILINEAR);
 
 }
