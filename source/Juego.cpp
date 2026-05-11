@@ -1,5 +1,6 @@
 #include "Juego.h"
 #include "Suelo.h"
+#include "Obstaculo.h"
 
 // Implementación del escuchador
 EscuchadorColisiones::EscuchadorColisiones(Sound s) : sonidoObstaculos(s) {}
@@ -42,6 +43,17 @@ void Juego::Iniciar() {
     // Creo el suelo inicial (Cuerpo Estático)
     objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
 
+    // A partir del suelo me armo los límites de la pantalla
+
+    // Pared Izquierda: x=10 (un poquito adentro), y=300 (mitad de alto), ancho=20, alto=600
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 10.0f, 300.0f }, 0.0f, 20.0f, 600.0f, b2_staticBody, DARKGRAY));
+
+    // Pared Derecha: x=990, y=300, ancho=20, alto=600
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 990.0f, 300.0f }, 0.0f, 20.0f, 600.0f, b2_staticBody, DARKGRAY));
+
+    // Techo: x=500 (mitad de ancho), y=10 (arriba), ancho=1000, alto=20
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500.0f, 10.0f }, 0.0f, 1000.0f, 20.0f, b2_staticBody, DARKGRAY));
+
     // Cargo catapulta
     catapulta.Iniciar();
 
@@ -50,6 +62,30 @@ void Juego::Iniciar() {
     proyectilActual = guisante.get(); // Guardo la dirección de memoria
     objetos.emplace_back(std::move(guisante)); // Lo muevo al vector
 
+    ///////// Creo obstáculos
+
+    for (int i = 0; i < 15; i++) {
+
+        // Genero dimensiones (tamaños) aleatorias
+        float randomW = (float)GetRandomValue(50, 80);
+        float randomH = (float)GetRandomValue(40, 70);
+
+        // Posición X aleatoria
+        float randomX = (float)GetRandomValue(200, 900);
+        
+        // Cálculo de Y para que esté apoyado (Centro = Superficie - Mitad de su altura)
+        float superficieSuelo = 560.0f; // El "piso" real de mi mundo
+        float posY = superficieSuelo - (randomH / 2.0f);
+
+        // Colores aleatorios --- Esto me ayudé de Gemini porque me estaba embrollando creando vector de colores
+        Color colorAzar = { (unsigned char)GetRandomValue(50, 255),
+                            (unsigned char)GetRandomValue(50, 255),
+                            (unsigned char)GetRandomValue(50, 255), 255 };
+
+        // Los meto al vector de objetos (uso b2_dynamicBody para que reaccionen al mundo físico)
+        objetos.emplace_back(std::make_unique<Obstaculo>(mundo.get(), b2Vec2{ randomX, posY }, randomW, randomH, colorAzar, BLACK));
+
+    }
 }
 
 void Juego::Actualizar() {

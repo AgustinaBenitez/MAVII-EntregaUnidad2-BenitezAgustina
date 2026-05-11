@@ -18,7 +18,7 @@ Proyectil::Proyectil(b2World* mundo, b2Vec2 pos, float ang, float rad, b2BodyTyp
     circuloFixture.shape = &formaCircular;
     circuloFixture.density = 0.1f;
     circuloFixture.friction = 0.3f;
-    circuloFixture.restitution = 0.7f;
+    circuloFixture.restitution = 2.0f;
 
     // Vinculo la forma al cuerpo
     cuerpo->CreateFixture(&circuloFixture);
