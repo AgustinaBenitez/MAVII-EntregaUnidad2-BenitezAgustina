@@ -1,0 +1,34 @@
+#include "Obstaculo.h"
+
+Obstaculo::Obstaculo(b2World* mundo, b2Vec2 pos, float w, float h, Color c1, Color c2)
+    : ObjetoFisico(mundo, pos, 0.0f, b2_dynamicBody, c1) {
+
+    ancho = w;
+    alto = h;
+    color2 = c2;
+
+    b2PolygonShape forma;
+    forma.SetAsBox(w / 2.0f, h / 2.0f);
+
+    b2FixtureDef fixture;
+    fixture.shape = &forma;
+    fixture.density = 0.1f;     
+    fixture.friction = 0.3f;
+    fixture.restitution = 0.7f;
+
+    cuerpo->CreateFixture(&fixture);
+
+}
+
+void Obstaculo::Dibujar() {
+
+    b2Vec2 pos = cuerpo->GetPosition();
+    float angulo = cuerpo->GetAngle() * RAD2DEG;
+
+    Rectangle rec = { pos.x, pos.y, ancho, alto };
+    Vector2 origen = { ancho / 2.0f, alto / 2.0f };
+
+    // Dibujo con degradé vertical usando los dos colores
+    DrawRectanglePro(rec, origen, angulo, color);
+
+}
