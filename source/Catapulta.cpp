@@ -17,8 +17,8 @@ Catapulta::~Catapulta() {
 void Catapulta::Iniciar() {
 
 	// Propiedades
-	escalaCatapulta = 0.1f;
-	posicionCatapulta = { 50, 420 };
+	escalaCatapulta = 0.08f;
+	posicionCatapulta = { 50, 450 };
 
 	// Cargo textura
 	texturaCatapulta = LoadTexture("assets/PvZ - Repeater.png");

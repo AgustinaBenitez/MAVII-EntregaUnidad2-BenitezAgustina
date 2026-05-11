@@ -13,7 +13,7 @@ public:
     Proyectil(b2World* mundo, b2Vec2 pos, float ang, float rad, b2BodyType tipo, Color col);
     ~Proyectil();
 
-    void AplicarImpulso(b2Vec2 impulso);
+    void AplicarImpulsoInicial(b2Vec2 impulso);
     void Dibujar() override; // "Override" recomendado por Gemini siempre que esté heredando
 
 };

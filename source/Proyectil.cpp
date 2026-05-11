@@ -16,12 +16,16 @@ Proyectil::Proyectil(b2World* mundo, b2Vec2 pos, float ang, float rad, b2BodyTyp
     // Defino las propiedades físicas mediante una fixture
     b2FixtureDef circuloFixture;
     circuloFixture.shape = &formaCircular;
-    circuloFixture.density = 0.05f;
+    circuloFixture.density = 0.1f;
     circuloFixture.friction = 0.3f;
-    circuloFixture.restitution = 0.6f;
+    circuloFixture.restitution = 0.7f;
 
     // Vinculo la forma al cuerpo
     cuerpo->CreateFixture(&circuloFixture);
+
+    // Desactivo la gravedad inicial para que el proyectil se mantenga quieto, listo para ser disparado
+    //Para que no se "caiga" de la catapulta antes de tiempo
+    cuerpo->SetGravityScale(0.0f);
 
 }
 
@@ -31,9 +35,13 @@ Proyectil::~Proyectil() {
 
 }
 
-void Proyectil::AplicarImpulso(b2Vec2 impulso) {
+void Proyectil::AplicarImpulsoInicial(b2Vec2 impulso) {
 
-    cuerpo->ApplyLinearImpulseToCenter(impulso, true); // Para cambiar inmediatamente la velocidad
+    // Le "devuelvo" la gravedad para que haga la parábola
+    cuerpo->SetGravityScale(1.0f);
+
+    // Aplico el impulso al centro para producir el cambio inmediato en la velocidad
+    cuerpo->ApplyLinearImpulseToCenter(impulso, true);
 
 }
 

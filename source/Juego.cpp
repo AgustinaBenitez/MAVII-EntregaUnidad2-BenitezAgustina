@@ -45,11 +45,8 @@ void Juego::Iniciar() {
     // Cargo catapulta
     catapulta.Iniciar();
 
-    // Creo proyectil en la parte inferior izquierda 
-    //objetos.emplace_back(std::make_unique<Proyectil>(mundo.get(), b2Vec2{ 100, 350 }, 0.0f, 20.0f, b2_dynamicBody, GREEN));
-
     // Creo proyectil (el guisante). Lo guardo en una variable temporal para tener el puntero
-    auto guisante = std::make_unique<Proyectil>(mundo.get(), b2Vec2{ 110, 420 }, 0.0f, 15.0f, b2_dynamicBody, GREEN);
+    auto guisante = std::make_unique<Proyectil>(mundo.get(), b2Vec2{ 131, 473 }, 0.0f, 15.0f, b2_dynamicBody, WHITE);
     proyectilActual = guisante.get(); // Guardo la dirección de memoria
     objetos.emplace_back(std::move(guisante)); // Lo muevo al vector
 
@@ -63,14 +60,19 @@ void Juego::Actualizar() {
     mundo->Step(1.0f / 60.0f, 8, 3);
 
     // Creo proyectil al presionar ESPACIO
-    if (IsKeyPressed(KEY_SPACE)) {
+    if (IsKeyPressed(KEY_SPACE) && proyectilActual != nullptr) {
 
         PlaySound(sonidoDisparo);
 
-        // Aplicamos el impulso (X positivo a la derecha, Y negativo hacia arriba)
-        // El valor depende de la masa (densidad) [cite: 8, 9, 10, 269, 270]
-        b2Vec2 impulso(1000.0f, -800.0f); // Ajustar estos números según la potencia que quieras
-        proyectilActual->AplicarImpulso(impulso);
+        // Aplico el impulso (X positivo a la derecha, Y negativo hacia arriba)
+        // El valor depende de la masa (densidad)
+        b2Vec2 impulsoInicial(10000.0f, -5000.0f);
+        
+        // Ejecuto la acción en el objeto
+        proyectilActual->AplicarImpulsoInicial(impulsoInicial);
+
+        // Anulo la referencia para que sea un disparo único y no se pueda disparar dos veces
+        proyectilActual = nullptr;
 
     }
 
