@@ -13,8 +13,8 @@ Obstaculo::Obstaculo(b2World* mundo, b2Vec2 pos, float w, float h, Color c1, Col
     b2FixtureDef fixture;
     fixture.shape = &forma;
     fixture.density = 0.1f;     
-    fixture.friction = 0.3f;
-    fixture.restitution = 0.7f;
+    fixture.friction = 1.0f;
+    fixture.restitution = 1.0f;
 
     cuerpo->CreateFixture(&fixture);
 
@@ -31,4 +31,7 @@ void Obstaculo::Dibujar() {
     // Dibujo con degradé vertical usando los dos colores
     DrawRectanglePro(rec, origen, angulo, color);
 
+    // Dibujo el borde usando el mismo rectángulo para que coincida perfecto
+    //DrawRectangleLinesPro(rec, origen, angulo, BLACK);
+    
 }

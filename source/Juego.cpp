@@ -62,30 +62,37 @@ void Juego::Iniciar() {
     proyectilActual = guisante.get(); // Guardo la dirección de memoria
     objetos.emplace_back(std::move(guisante)); // Lo muevo al vector
 
-    ///////// Creo obstáculos
+    ////// Creo obstáculos
+    float superficieSuelo = 560.0f; // Superficie del suelo estático
+    float posicionesX[] = { 500.0f, 700.0f, 850.0f }; // Tres bases para torres
 
-    for (int i = 0; i < 15; i++) {
+    for (float xBase : posicionesX) {
+        float alturaAcumulada = 0.0f;
+        int pisos = GetRandomValue(3, 7); // Cada torre tiene entre 3 y 8 pisos
 
-        // Genero dimensiones (tamaños) aleatorias
-        float randomW = (float)GetRandomValue(50, 80);
-        float randomH = (float)GetRandomValue(40, 70);
+        for (int j = 0; j < pisos; j++) {
 
-        // Posición X aleatoria
-        float randomX = (float)GetRandomValue(200, 900);
-        
-        // Cálculo de Y para que esté apoyado (Centro = Superficie - Mitad de su altura)
-        float superficieSuelo = 560.0f; // El "piso" real de mi mundo
-        float posY = superficieSuelo - (randomH / 2.0f);
+            // Tamaños aleatorios para variedad
+            float w = (float)GetRandomValue(40, 100);
+            float h = (float)GetRandomValue(40, 100);
 
-        // Colores aleatorios --- Esto me ayudé de Gemini porque me estaba embrollando creando vector de colores
-        Color colorAzar = { (unsigned char)GetRandomValue(50, 255),
-                            (unsigned char)GetRandomValue(50, 255),
-                            (unsigned char)GetRandomValue(50, 255), 255 };
+            // El centro Y se calcula restando la mitad de la altura actual 
+            // a la altura que ya subí desde el suelo
+            float posY = (superficieSuelo - alturaAcumulada) - (h / 2.0f);
 
-        // Los meto al vector de objetos (uso b2_dynamicBody para que reaccionen al mundo físico)
-        objetos.emplace_back(std::make_unique<Obstaculo>(mundo.get(), b2Vec2{ randomX, posY }, randomW, randomH, colorAzar, BLACK));
+            Color col = { (unsigned char)GetRandomValue(100, 255),
+                          (unsigned char)GetRandomValue(100, 255),
+                          (unsigned char)GetRandomValue(100, 255), 255 };
+
+            objetos.emplace_back(std::make_unique<Obstaculo>(mundo.get(), b2Vec2{ xBase, posY }, w, h, col, BLACK));
+
+            // Actualizo la base para el próximo bloque del piso de arriba
+            alturaAcumulada += h;
+
+        }
 
     }
+
 }
 
 void Juego::Actualizar() {
