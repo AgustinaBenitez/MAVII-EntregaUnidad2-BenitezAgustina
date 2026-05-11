@@ -1,11 +1,10 @@
 #include "Obstaculo.h"
 
-Obstaculo::Obstaculo(b2World* mundo, b2Vec2 pos, float w, float h, Color c1, Color c2)
-    : ObjetoFisico(mundo, pos, 0.0f, b2_dynamicBody, c1) {
+Obstaculo::Obstaculo(b2World* mundo, b2Vec2 pos, float w, float h, Color c)
+    : ObjetoFisico(mundo, pos, 0.0f, b2_dynamicBody, c) {
 
     ancho = w;
     alto = h;
-    color2 = c2;
 
     b2PolygonShape forma;
     forma.SetAsBox(w / 2.0f, h / 2.0f);
@@ -28,10 +27,7 @@ void Obstaculo::Dibujar() {
     Rectangle rec = { pos.x, pos.y, ancho, alto };
     Vector2 origen = { ancho / 2.0f, alto / 2.0f };
 
-    // Dibujo con degradé vertical usando los dos colores
+    // Dibujo los obstáculos
     DrawRectanglePro(rec, origen, angulo, color);
-
-    // Dibujo el borde usando el mismo rectángulo para que coincida perfecto
-    //DrawRectangleLinesPro(rec, origen, angulo, BLACK);
     
 }

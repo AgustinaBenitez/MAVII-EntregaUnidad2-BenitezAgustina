@@ -5,7 +5,7 @@ ObjetoFisico::ObjetoFisico(b2World* mundo, b2Vec2 posicion, float angulo, b2Body
     color = col;
 
     // Configuración inicial del cuerpo físico
-    b2BodyDef defCuerpo; // La definición es local
+    b2BodyDef defCuerpo;
     defCuerpo.type = tipo;
     defCuerpo.position = posicion;
     defCuerpo.angle = angulo;

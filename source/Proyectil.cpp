@@ -23,8 +23,8 @@ Proyectil::Proyectil(b2World* mundo, b2Vec2 pos, float ang, float rad, b2BodyTyp
     // Vinculo la forma al cuerpo
     cuerpo->CreateFixture(&circuloFixture);
 
-    // Desactivo la gravedad inicial para que el proyectil se mantenga quieto, listo para ser disparado
-    //Para que no se "caiga" de la catapulta antes de tiempo
+    // Desactivo la gravedad inicial para que el proyectil se mantenga quieto, listo para ser disparado al inicio del juego
+    // Para que no se "caiga" de la catapulta antes de tiempo
     cuerpo->SetGravityScale(0.0f);
 
 }
@@ -52,11 +52,11 @@ void Proyectil::Dibujar() {
     float angulo = cuerpo->GetAngle() * RAD2DEG;
 
     // Defino el origen, el destino y el centro de rotación
-    Rectangle source = { 0, 0, (float)texturaGuisante.width, (float)texturaGuisante.height };
-    Rectangle dest = { pos.x, pos.y, radio * 2, radio * 2 };
+    Rectangle origen = { 0, 0, (float)texturaGuisante.width, (float)texturaGuisante.height };
+    Rectangle destino = { pos.x, pos.y, radio * 2, radio * 2 };
     Vector2 centro = { radio, radio };
 
     // Le paso a Raylib la info de Box2D para representar el objeto
-    DrawTexturePro(texturaGuisante, source, dest, centro, angulo, WHITE);
+    DrawTexturePro(texturaGuisante, origen, destino, centro, angulo, WHITE);
 
 }

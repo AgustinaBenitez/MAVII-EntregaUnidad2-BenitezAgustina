@@ -40,69 +40,27 @@ void Juego::Iniciar() {
     escuchador = std::make_unique<EscuchadorColisiones>(sonidoObstaculos);
     mundo->SetContactListener(escuchador.get());
 
-    // Creo el suelo inicial (Cuerpo Estático)
-    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
-
-    // A partir del suelo me armo los límites de la pantalla
-
-    // Pared Izquierda: x=10 (un poquito adentro), y=300 (mitad de alto), ancho=20, alto=600
-    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 10.0f, 300.0f }, 0.0f, 20.0f, 600.0f, b2_staticBody, DARKGRAY));
-
-    // Pared Derecha: x=990, y=300, ancho=20, alto=600
-    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 990.0f, 300.0f }, 0.0f, 20.0f, 600.0f, b2_staticBody, DARKGRAY));
-
-    // Techo: x=500 (mitad de ancho), y=10 (arriba), ancho=1000, alto=20
-    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500.0f, 10.0f }, 0.0f, 1000.0f, 20.0f, b2_staticBody, DARKGRAY));
-
     // Cargo catapulta
     catapulta.Iniciar();
 
-    // Creo proyectil (el guisante). Lo guardo en una variable temporal para tener el puntero
-    auto guisante = std::make_unique<Proyectil>(mundo.get(), b2Vec2{ 131, 473 }, 0.0f, 15.0f, b2_dynamicBody, WHITE);
-    proyectilActual = guisante.get(); // Guardo la dirección de memoria
-    objetos.emplace_back(std::move(guisante)); // Lo muevo al vector
-
-    ////// Creo obstáculos
-    float superficieSuelo = 560.0f; // Superficie del suelo estático
-    float posicionesX[] = { 500.0f, 700.0f, 850.0f }; // Tres bases para torres
-
-    for (float xBase : posicionesX) {
-        float alturaAcumulada = 0.0f;
-        int pisos = GetRandomValue(3, 7); // Cada torre tiene entre 3 y 8 pisos
-
-        for (int j = 0; j < pisos; j++) {
-
-            // Tamaños aleatorios para variedad
-            float w = (float)GetRandomValue(40, 100);
-            float h = (float)GetRandomValue(40, 100);
-
-            // El centro Y se calcula restando la mitad de la altura actual 
-            // a la altura que ya subí desde el suelo
-            float posY = (superficieSuelo - alturaAcumulada) - (h / 2.0f);
-
-            Color col = { (unsigned char)GetRandomValue(100, 255),
-                          (unsigned char)GetRandomValue(100, 255),
-                          (unsigned char)GetRandomValue(100, 255), 255 };
-
-            objetos.emplace_back(std::make_unique<Obstaculo>(mundo.get(), b2Vec2{ xBase, posY }, w, h, col, BLACK));
-
-            // Actualizo la base para el próximo bloque del piso de arriba
-            alturaAcumulada += h;
-
-        }
-
-    }
+    // Cargo todos los objetos
+    Reiniciar();
 
 }
 
 void Juego::Actualizar() {
 
-    UpdateMusicStream(musicaFondo); // OBLIGATORIO para que suene la música
+    UpdateMusicStream(musicaFondo); // Obligatorio para que suene la música
 
     // Avanzo la simulación física
     mundo->Step(1.0f / 60.0f, 8, 3);
 
-    // Creo proyectil al presionar ESPACIO
+    // Para reiniciar juego
+    if (IsKeyPressed(KEY_R)) {
+        Reiniciar();
+    }
+
+    // Creo proyectil al presionar ESPACIO y solo una vez
     if (IsKeyPressed(KEY_SPACE) && proyectilActual != nullptr) {
 
         PlaySound(sonidoDisparo);
@@ -132,14 +90,79 @@ void Juego::Renderizar() {
             obj->Dibujar();
         }
 
-        //Dibujo la catapulta
+        // Dibujo la catapulta
         catapulta.Dibujar();
 
-        //Dibujo los obstáculos
-
         // Muestro carteles e instrucciones
+        DrawText("SPACE: Disparar guisante", 25, 21, 30, DARKGRAY);
+        DrawText("R: Reiniciar torres", 25, 61, 30, DARKGRAY);
 
     EndDrawing();
+
+}
+
+void Juego::Reiniciar() {
+
+    // Limpio el vector (nota para mí: los unique_ptr se encargan de DestroyBody)
+    objetos.clear();
+
+    // Reseteo el puntero del proyectil
+    proyectilActual = nullptr;
+
+    // Creo el suelo inicial (Cuerpo Estático)
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
+
+    /////// A partir del suelo me armo los límites de la pantalla
+
+    // Pared Izquierda: x=10 (un poquito adentro), y=300 (mitad de alto), ancho=20, alto=600
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 10.0f, 300.0f }, 0.0f, 20.0f, 600.0f, b2_staticBody, DARKGRAY));
+
+    // Pared Derecha: x=990, y=300, ancho=20, alto=600
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 990.0f, 300.0f }, 0.0f, 20.0f, 600.0f, b2_staticBody, DARKGRAY));
+
+    // Techo: x=500 (mitad de ancho), y=10 (arriba), ancho=1000, alto=20
+    objetos.emplace_back(std::make_unique<Suelo>(mundo.get(), b2Vec2{ 500.0f, 10.0f }, 0.0f, 1000.0f, 20.0f, b2_staticBody, DARKGRAY));
+
+    /////// Creo proyectil (el guisante)
+
+    auto guisante = std::make_unique<Proyectil>(mundo.get(), b2Vec2{ 131, 473 }, 0.0f, 15.0f, b2_dynamicBody, WHITE);
+
+    proyectilActual = guisante.get(); // Guardo la dirección de memoria en una variable temporal para tener el puntero
+    objetos.emplace_back(std::move(guisante)); // Lo muevo al vector
+
+    ////// Creo obstáculos
+
+    float superficieSuelo = 560.0f; // Superficie del suelo estático
+    float posicionesX[] = { 500.0f, 700.0f, 850.0f }; // Tres bases para torres
+
+    for (float xBase : posicionesX) {
+
+        float alturaAcumulada = 0.0f;
+        int pisos = GetRandomValue(3, 7); // Cada torre tiene entre 3 y 7 pisos
+
+        for (int j = 0; j < pisos; j++) {
+
+            // Tamaños aleatorios para variedad
+            float w = (float)GetRandomValue(30, 100);
+            float h = (float)GetRandomValue(30, 100);
+
+            // El centro Y se calcula restando la mitad de la altura actual 
+            // a la altura que ya subí desde el suelo ---- Me ayudó Gemini
+            float posY = (superficieSuelo - alturaAcumulada) - (h / 2.0f);
+
+            // Con los colores también me ayudó Gemini porque me estaba haciendo mucho embrollo intentando crear un vector
+            Color col = { (unsigned char)GetRandomValue(100, 255),
+                          (unsigned char)GetRandomValue(100, 255),
+                          (unsigned char)GetRandomValue(100, 255), 255 };
+
+            objetos.emplace_back(std::make_unique<Obstaculo>(mundo.get(), b2Vec2{ xBase, posY }, w, h, col));
+
+            // Actualizo la base para el próximo bloque del piso de arriba
+            alturaAcumulada += h;
+
+        }
+
+    }
 
 }
 
@@ -152,8 +175,7 @@ Juego::~Juego() {
     // Descargo los recursos de Raylib
     UnloadMusicStream(musicaFondo);
     UnloadSound(sonidoDisparo);
-    UnloadSound(sonidoObstaculos);
-    
+    UnloadSound(sonidoObstaculos);    
 
 }
 
